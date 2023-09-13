@@ -130,12 +130,14 @@ const submit = async ()=>{
         email:inp.email,
         password:inp.password
       })
-      if(data.status === false){
+
+      if(data.status == false){
         toast.error(data.msg,toastOptions)
       }
-      if(data.status === true){
-        toast.success("logged In Successfully")
-        localStorage.setItem('chat-app-user',JSON.stringify(data.user))
+      if(data.status == true){
+        localStorage.setItem('chat-app-user',JSON.stringify(data.data));
+        router.push('/avatar');
+        
       }
     setInp({
       username:"",
@@ -143,7 +145,6 @@ const submit = async ()=>{
       password:"",
       confirmpassword:""
     })
-  console.log(data);
 }
 }
   return (

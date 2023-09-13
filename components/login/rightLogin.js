@@ -51,7 +51,6 @@ const login = useGoogleLogin({
     setToken(tokenResponse.access_token);
     // window.sessionStorage.setItem("access_token", tokenResponse.accessToken);
     //     window.sessionStorage.setItem("name", tokenResponse.profileObj.name);
-    console.log(tokenResponse)
     window.sessionStorage.setItem('access_token',tokenResponse.access_token);
    
   

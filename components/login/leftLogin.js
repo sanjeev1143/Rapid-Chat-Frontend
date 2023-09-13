@@ -1,6 +1,10 @@
+import { loginRoute } from '@/utils/APIRoutes';
+import axios from 'axios';
 import { useRouter } from 'next/router'
-import React,{ useState }  from 'react'
+import React,{ useEffect, useState }  from 'react'
+import { ToastContainer, toast } from 'react-toastify';
 import styled from 'styled-components'
+import "react-toastify/dist/ReactToastify.css"
 
 
 const MainCont = styled.div`
@@ -86,24 +90,68 @@ line-height: normal;
 
 function LeftLogin() {
     const router = useRouter();
+    
+    const toastOptions = {
+        position:'bottom-right',
+        autoClose:8000,
+        pauseOnHover:true,
+        draggable:true,
+        theme:"dark",
+        crossOrigin:"true"
+      };
     const [inp,setInp] = useState({
         username:"",
         password:""
     })
+    const handleValidation=()=>{
+        const {password,username} = inp;
+        
+        if(username.length<3){
+          toast.error("Invalid Username",toastOptions);
+          return false;
+        }
+        if(password.length<8){
+          toast.error("Invalid Password")
+          return false; 
+        }
+        return true;
+      }
     const change = (e)=>{
         setInp({
             ...inp,[e.target.name]:e.target.value
         })
        
     }
-    const submit = ()=>{
-        const data =  inp;
+    const submit = async ()=>{
+        const {username,password} =  inp;
         setInp({
         username:"",
         password:""
         })
-    console.log(data);
+        if(handleValidation()){
+            const resp = await axios.post(loginRoute,{
+                username:username,
+                password:password
+            })
+            if(resp.data.status == true){
+                localStorage.setItem('chat-app-user',JSON.stringify(resp.data.data));
+                router.push('/chat');
+              } 
+        
+
+        }
+        setInp({
+            username:"",
+            password:""
+          })
     }
+
+
+    useEffect(()=>{
+      if (localStorage.getItem('chat-app-user')) {
+          router.push('/chat')
+      }
+    },[])
 
   return (
     <MainCont>
@@ -113,6 +161,7 @@ function LeftLogin() {
       <div className="btn pointer hover" onClick={()=>submit()}>Login to Your Account <div className="rightarrow"></div></div>
       <div className="regtxt1">Don’t have an account yet? <span className="boldw" onClick={()=>router.push('register')}>Register now!</span></div>
     </div>
+    <ToastContainer/>
 
     </MainCont>
   )
