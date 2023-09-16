@@ -1,19 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { googleLogout } from '@react-oauth/google';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import axios from 'axios';
-import { allUsersRoute } from '@/utils/APIRoutes';
-import Contact from '@/components/chat/contact';
+import { allUsersRoute, host } from '@/utils/APIRoutes';
+// import Contact from '@/components/chat/contact';
 import Image from 'next/image';
 import Welcome from '@/components/chat/welcome';
-import Chatcontainer from '@/components/chat/chatcontainer';
+import dynamic from 'next/dynamic';
+// import Chatcontainer from '@/components/chat/chatcontainer';
+import {io } from 'socket.io-client';
 
+
+const Chatcontainer = dynamic(()=>import('@/components/chat/chatcontainer'),{ssr:true})
+const Contact = dynamic(()=>import('@/components/chat/contact'),{ssr:false})
 
 const MainCont = styled.div`
 
-width: 100vw;
+position: fixed;
 height: 100vh;
+width: 100vw;
+margin-top: 30px;
+-ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+overflow: hidden;
 display: flex;
 justify-content: center;
 align-items: center;
@@ -21,9 +31,14 @@ align-items: center;
   background-color: rgba(0,0,0,0.4);
   display: grid;
   grid-template-columns: 30% 70%;
-width: 90vw;
-height: 90vh;
+width: 1400px;
+height: 710px;
 
+
+
+}
+.chat-page::-webkit-scrollbar {
+  display: none;
 }
 .chat-content{
 
@@ -44,19 +59,13 @@ justify-content: center;
 
 
 function Chat() {
-    // const [token,setToken] = useState('')
     const router = useRouter();
-    // const logout =async ()=>{
-    //    const resp = await googleLogout();
-    //     console.log(resp);
-    //     window.sessionStorage.removeItem('access_token')
-        
-    //     router.push('/')
-    // }
+    const socket = useRef();
     const [contacts, setContacts] = useState([]);
     const [currentUser,setCurrentUser] = useState(undefined);
     const [currentChat, setCurrentChat] = useState(undefined);
     const [isLoaded,setIsLoaded] = useState(false);
+    const [count,setCount] = useState(0);
     useEffect(  ()=>{
       async function fetchData() {
 
@@ -67,31 +76,46 @@ function Chat() {
       else {
         setCurrentUser(await JSON.parse(localStorage.getItem('chat-app-user')))
         setIsLoaded(true);
-      if(currentUser){
-        console.log(currentUser);
-        if(  currentUser.isAvatarImageSet){
-          const resp = await axios.get(`${allUsersRoute}/${currentUser.id}`);
-          setContacts(resp.data);
-        }else{
-          router.push('/avatar')
-        }
-      }
+    
       }}
       fetchData();
     },[])
 
+   useEffect(()=>{
+      
+      const fun = async () => {
+        if(currentUser){
+          if(  currentUser.isAvatarImageSet){
+            const resp = await axios.get(`${allUsersRoute}/${currentUser.id}`);
+            setContacts(resp.data);
+            setCount(count+1);
+           
+          }else{
+            router.push('/avatar')
+          }
+        }
 
-    // useEffect(()=>{
-    //   const fun = async()=>{
-    //     const resp = await axios.get(allUsersRoute);
-    //     console.log(resp.data);
-    //   }
-    //   fun();
-    // },[])
+
+      
+    }
+    fun();
+  }, [currentUser]);
+
+
+
+ 
+
+
+    useEffect(()=>{
+      if(currentUser){
+        socket.current = io('http://localhost:8000');
+        socket.current.emit("add-user",currentUser.id);
+      }
+    },[currentUser])
+
     const handleChatChange = (chat) => {
       setCurrentChat(chat);
     };
-
 
   return (
     <MainCont>
@@ -102,7 +126,7 @@ function Chat() {
       <div className='chat-content'>
 {      
 
-        isLoaded &&  currentChat===undefined?<Welcome currentUser={currentUser}  />:<Chatcontainer currentUser={currentUser}/>
+        isLoaded &&  currentChat===undefined ?<Welcome currentUser={currentUser}  />:<Chatcontainer currentChat={currentChat} currentUser={currentUser} socket={socket}/>
 }      </div>
     </div>
     </MainCont>
