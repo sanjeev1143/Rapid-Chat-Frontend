@@ -22,7 +22,12 @@ height: 100%;
   display: none;
 }
 .Logo-Header{
+  margin-left: 18px;
   height: 80px;
+  display: flex;
+  align-items: center;
+gap: 20px;
+
 }
 .username{
   color: white;
@@ -48,7 +53,7 @@ height: 100%;
   justify-content: center;
   width: 100%;
   gap: 30px;
-  padding: 10px;
+ height:70px;
   background-color: #2A2E3A;
   position: absolute;
   bottom: 0;
@@ -61,6 +66,12 @@ height: 100%;
   cursor: pointer;
   color: #fff;
 }
+.logo-txt{
+  font-family: Space Grotesk;
+font-size: 28px;
+color: white;
+}
+
 
 `
 
@@ -186,7 +197,10 @@ function Contact({contacts,currentUser,changeChat}) {
   }
   return ( 
     <MainCont>
-      <div className='Logo-Header'></div>
+      <div className='Logo-Header'>
+        <Image src={"/club-excel-logo-new.png"} height={70} width={70} alt='Logo'/>
+        <div className='logo-txt'>Excel Chat App</div>
+      </div>
     <div className='contact-div'>
         {
           contacts && (

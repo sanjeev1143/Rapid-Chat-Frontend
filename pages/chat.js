@@ -17,24 +17,26 @@ const Contact = dynamic(()=>import('@/components/chat/contact'),{ssr:false})
 
 const MainCont = styled.div`
 
-position: fixed;
-height: 100vh;
-width: 100vw;
+
+
 margin-top: 30px;
 -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-overflow: hidden;
 display: flex;
 justify-content: center;
 align-items: center;
 .chat-page{
+  margin-top: 680px;
+  position: fixed;
   background-color: rgba(0,0,0,0.4);
   display: grid;
   grid-template-columns: 30% 70%;
 width: 1400px;
 height: 710px;
 
-
+@media (min-width: 600px) and (max-width:1200px) {
+  transform: scale(0.5);
+}
 
 }
 .chat-page::-webkit-scrollbar {

@@ -16,10 +16,8 @@ position: relative;
 .Chat-container{
   height: 700px;
   width: 100%;
-  padding-top: 1rem ;
   display: grid;
   gap:0.1rem;
-  overflow:hidden ;
   @media screen  and (min-width: 720px) and (max-width:1020px){
     grid-template-rows: 15% 70% 15%;
   }
@@ -37,7 +35,11 @@ position: relative;
 .chat-header{
   width: 100%;
   height: 75px;
-  margin-top: 80px;
+  background: rgb(15,6,31);
+background: -moz-linear-gradient(270deg, rgba(15,6,31,1) 0%, rgba(11,6,32,1) 0%, rgba(7,7,8,1) 100%);
+background: -webkit-linear-gradient(270deg, rgba(15,6,31,1) 0%, rgba(11,6,32,1) 0%, rgba(7,7,8,1) 100%);
+background: linear-gradient(270deg, rgba(15,6,31,1) 0%, rgba(11,6,32,1) 0%, rgba(7,7,8,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0f061f",endColorstr="#070708",GradientType=1);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -45,8 +47,8 @@ position: relative;
 }
 height: 100%;
 .chat-message{
-  
-  height: 440px;
+  margin-top: -20px;
+  height: 520px;
   padding: 1rem 2rem;
  display: flex;
  flex-direction: column;
